@@ -58,12 +58,13 @@ def analyse(df):
     kmf.fit(df["duration"], event_observed=df["event"], label="All customers")
     print("Median survival (days):", kmf.median_survival_time_)
     print(kmf.predict([90, 180, 365, 540]))
-    ax = kmf.plot_survival_function()
+    fig, ax = plt.subplots()
+    kmf.plot_survival_function(ax=ax)
     ax.set_xlabel("Days since first purchase")
     ax.set_ylabel("Share of customers still active")
     ax.set_title("How long customers stay active")
-    plt.savefig(f"{FIG_DIR}/km_overall.png", dpi=150, bbox_inches="tight")
-    plt.close()
+    fig.savefig(f"{FIG_DIR}/km_overall.png", dpi=150, bbox_inches="tight")
+    plt.close(fig)
 
     # 2. Compare groups known at the start (not leaky): UK vs other, small vs large first order
     df = df.copy()
