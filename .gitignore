@@ -6,3 +6,5 @@ __pycache__/
 account.py
 .vscode/
 data/
+
+!dashboard/summary/*.csv
