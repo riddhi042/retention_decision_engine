@@ -62,12 +62,12 @@ docs/retention-sql-notes.md  notes and results for each SQL step
 
 - [x] Load and clean the data in PostgreSQL
 - [x] Cohort retention, churn definition, RFM segments
-- [ ] Connect Python to PostgreSQL
-- [ ] Survival analysis (Kaplan-Meier curves, Cox model) on the 180-day churn labels
-- [ ] Customer lifetime value
+- [x] Connect Python to PostgreSQL
+- [x] Survival analysis (Kaplan-Meier curves, Cox model) on the 180-day churn labels
+- [x] Customer lifetime value
 - [ ] Features built only from data before a cutoff date, for any predictive modelling
-- [ ] Uplift model on the Hillstrom email experiment
-- [ ] Contact-or-not decision rule, with validation
+- [x] Uplift model on the Hillstrom email experiment
+- [x] Contact-or-not decision rule, with validation
 - [ ] Final write-up of results
 
 ## Tools
