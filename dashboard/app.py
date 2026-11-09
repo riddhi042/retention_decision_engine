@@ -15,19 +15,36 @@ st.set_page_config(page_title="Retention Decision Engine", layout="wide")
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SUMMARY = os.path.join(HERE, "summary")
-BLUE, ORANGE, GREY, INK, MUTED = "#2a78d6", "#eb6834", "#8a8985", "#0b0b0b", "#52514e"
+BLUE, ORANGE, GREY, INK, MUTED = "#6c5ce7", "#f0614f", "#9b94b3", "#2b2540", "#6b6483"
 SERIES = [BLUE, ORANGE]
 
 st.markdown(
     """
     <style>
-      .block-container {padding-top: 2.2rem; max-width: 1180px;}
-      [data-testid="stMetric"] {background: #f1f0ec; border-radius: 12px; padding: 14px 18px;}
-      [data-testid="stMetricLabel"] p {color: #52514e; font-size: 0.85rem;}
-      h1 {letter-spacing: -0.02em; margin-bottom: 0.2rem;}
-      .lede {color: #52514e; font-size: 1.05rem; margin-bottom: 1.4rem; max-width: 52rem;}
-      .takeaway {border-left: 4px solid #2a78d6; padding: 0.4rem 0 0.4rem 0.9rem; margin: 0.6rem 0 1.2rem 0;
-                 color: #0b0b0b; background: transparent;}
+      @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+      html, body, [class*="st-"], .stMarkdown, button {font-family: 'Nunito', sans-serif !important;}
+      .block-container {padding-top: 3.4rem; max-width: 1180px;}
+      .hero {background: linear-gradient(120deg, #efe9ff 0%, #ffe9e3 55%, #fff3d6 100%); border-radius: 26px;
+             padding: 2rem 2.2rem 1.7rem 2.2rem; margin-bottom: 1.3rem; box-shadow: 0 6px 24px rgba(108,92,231,0.10);}
+      .hero h1 {font-size: 2.5rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 0.35rem 0; padding: 0; color: #2b2540;}
+      .hero p {color: #5b5474; font-size: 1.08rem; margin: 0 0 1rem 0; max-width: 46rem; line-height: 1.55;}
+      .chip {display: inline-block; background: rgba(255,255,255,0.8); color: #4b3bb8; border-radius: 999px;
+             padding: 0.22rem 0.8rem; font-size: 0.82rem; font-weight: 700; margin: 0 0.4rem 0.3rem 0;}
+      [data-testid="stMetric"] {border-radius: 20px; padding: 16px 20px; box-shadow: 0 3px 14px rgba(108,92,231,0.08);}
+      [data-testid="stColumn"]:nth-child(1) [data-testid="stMetric"] {background: #efe9ff;}
+      [data-testid="stColumn"]:nth-child(2) [data-testid="stMetric"] {background: #ffe9e3;}
+      [data-testid="stColumn"]:nth-child(3) [data-testid="stMetric"] {background: #fff3d6;}
+      [data-testid="stColumn"]:nth-child(4) [data-testid="stMetric"] {background: #e3f6ee;}
+      [data-testid="stMetricLabel"] p {color: #5b5474; font-size: 0.86rem; font-weight: 600;}
+      [data-testid="stMetricValue"] {font-weight: 800;}
+      div[data-testid="stPlotlyChart"] {background: #ffffff; border-radius: 22px; padding: 10px 12px;
+             box-shadow: 0 4px 18px rgba(108,92,231,0.09);}
+      button[role="tab"] {font-weight: 700; font-size: 1rem;}
+      .takeaway {background: #f3eeff; border-radius: 18px; padding: 0.85rem 1.1rem; margin: 0.8rem 0 1.2rem 0;
+                 color: #2b2540; line-height: 1.5;}
+      [data-testid="stAlert"] {border-radius: 16px;}
+      [data-testid="stExpander"] {border-radius: 16px;}
+      .footer {text-align: center; color: #9b94b3; font-size: 0.85rem; margin-top: 2rem;}
     </style>
     """,
     unsafe_allow_html=True,
@@ -46,25 +63,31 @@ def load(name):
 def style(fig, height=380, legend=True):
     fig.update_layout(
         height=height, margin=dict(l=10, r=10, t=84, b=10), title_y=0.98, title_yanchor="top", paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)", font=dict(color=INK, size=13), showlegend=legend,
+        plot_bgcolor="rgba(0,0,0,0)", font=dict(color=INK, size=13, family="Nunito, sans-serif"), showlegend=legend,
         legend=dict(orientation="h", yanchor="bottom", y=1.0, xanchor="left", x=0),
         hoverlabel=dict(bgcolor="white", font_size=13),
     )
-    fig.update_xaxes(showline=True, linecolor="#c9c8c3", gridcolor="#e6e5e1", zeroline=False, tickfont=dict(color=MUTED))
-    fig.update_yaxes(showline=False, gridcolor="#e6e5e1", zeroline=False, tickfont=dict(color=MUTED))
+    fig.update_xaxes(showline=True, linecolor="#d9d1ea", gridcolor="#f0ebf8", zeroline=False, tickfont=dict(color=MUTED))
+    fig.update_yaxes(showline=False, gridcolor="#f0ebf8", zeroline=False, tickfont=dict(color=MUTED))
     return fig
 
 
 def takeaway(text):
-    st.markdown(f'<div class="takeaway">{text}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="takeaway">&#10024; {text}</div>', unsafe_allow_html=True)
 
 
 S = load("summary.json")
 
-st.title("Retention Decision Engine")
 st.markdown(
-    '<div class="lede">Which customers are worth trying to keep, and is contacting them worth the cost? '
-    "Built on real retail purchases (UCI Online Retail II) and a randomized email experiment (Hillstrom).</div>",
+    """
+    <div class="hero">
+      <h1>Retention Decision Engine</h1>
+      <p>Which customers are worth trying to keep, and is contacting them worth the cost?
+      Built on real retail purchases (UCI Online Retail II) and a randomized email experiment (Hillstrom).</p>
+      <span class="chip">survival analysis</span><span class="chip">customer value</span>
+      <span class="chip">uplift modelling</span><span class="chip">contact-or-not rule</span>
+    </div>
+    """,
     unsafe_allow_html=True,
 )
 
@@ -74,7 +97,7 @@ k2.metric("Churned (no purchase in 180 days)", f"{S['churn_rate']:.0%}")
 k3.metric("Revenue from the top 10% of customers", f"{S['top_decile_revenue_share']:.0%}")
 k4.metric("Lift in site visits from an email", f"+{S['visit_effect'] * 100:.1f} pts")
 
-tab1, tab2, tab3, tab4 = st.tabs(["Customers", "When customers leave", "Customer value", "Email and the decision rule"])
+tab1, tab2, tab3, tab4 = st.tabs(["🛍️ Customers", "⏳ When customers leave", "💎 Customer value", "💌 Email and the decision rule"])
 
 # ------------------------------------------------------------------ tab 1
 with tab1:
@@ -82,7 +105,7 @@ with tab1:
     c1, c2 = st.columns(2)
     monthly = load("monthly.csv")
     fig = go.Figure(go.Scatter(x=monthly["month"], y=monthly["revenue"], mode="lines", line=dict(color=BLUE, width=2.5),
-                               fill="tozeroy", fillcolor="rgba(42,120,214,0.12)", name="Revenue",
+                               fill="tozeroy", fillcolor="rgba(108,92,231,0.14)", name="Revenue",
                                hovertemplate="%{x|%b %Y}<br>Revenue %{y:,.0f}<extra></extra>"))
     fig.update_layout(title=dict(text="Monthly revenue (seasonal, with a Christmas peak)", x=0, font=dict(size=15)))
     c1.plotly_chart(style(fig, legend=False), use_container_width=True)
@@ -98,7 +121,7 @@ with tab1:
     cohort = load("cohort.csv")
     pivot = cohort.pivot(index="cohort_month", columns="month_number", values="retention_pct")
     fig = go.Figure(go.Heatmap(z=pivot.values, x=pivot.columns, y=pivot.index.astype(str), zmin=0, zmax=60,
-                               colorscale=[[0, "#eaf2fc"], [1, "#1c4f8f"]], colorbar=dict(title="% active"),
+                               colorscale=[[0, "#f6f2ff"], [1, "#4b3bb8"]], colorbar=dict(title="% active"),
                                hovertemplate="Cohort %{y}<br>%{x} months later<br>%{z}% bought<extra></extra>"))
     fig.update_layout(title=dict(text="Cohort retention: share of each first-purchase month who buy again", x=0, font=dict(size=15)),
                       xaxis=dict(title="Months since first purchase"), yaxis=dict(autorange="reversed"))
@@ -226,3 +249,5 @@ with st.expander("Limits and assumptions"):
         "- Only about 1% of emailed customers bought, so purchases were too rare to model directly; the model predicts site visits and revenue per visit is estimated from the average effect.\n"
         "- The model's predicted lift is larger than the real lift at the top, so trust its ordering more than its size."
     )
+
+st.markdown('<div class="footer">Python · PostgreSQL · lifelines · scikit-learn · Streamlit · Plotly</div>', unsafe_allow_html=True)
